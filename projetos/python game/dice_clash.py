@@ -15,6 +15,9 @@ class Player:
     def add_opponent(self, opponent):
         self.opponent = opponent
 
+    def reset_matrix(self):
+        self.matrix = np.zeros((self.matrix.shape[0], self.matrix.shape[1]))
+
     def roll_die(self):
         roll = np.random.randint(1, 7)
         print(f"Player {self.name}, you've rolled a {roll}!\n")
@@ -69,9 +72,9 @@ class Player:
             for number in unique_numbers:
                 count = np.count_nonzero(column == number)
                 if count == 1:
-                    self.score += number
+                    self.score += int(number)
                 else:
-                    self.score += number * count * count
+                    self.score += int(number * count * count)
 
 
 class Match:
@@ -91,16 +94,84 @@ class Match:
         self.player1.add_opponent(self.player2)
         self.player2.add_opponent(self.player1)
 
+        self.tutorial_player1 = Player(name="Tom", matrix_size=matrix_size)
+        self.tutorial_player2 = Player(name="Jerry", matrix_size=matrix_size)
+
+    def tutorial_stats(self):
+        print(f"Player {self.tutorial_player1.name}'s matrix:")
+        print(self.tutorial_player1.matrix, f"\nPlayer {self.tutorial_player1.name}'s score: {self.tutorial_player1.score}")
+        print()
+        print(f"Player {self.tutorial_player2.name}'s matrix:")
+        print(self.tutorial_player2.matrix, f"\nPlayer {self.tutorial_player2.name}'s score: {self.tutorial_player2.score}")
+        print()
+
     def tutorial(self):
-        example_matrix = np.copy(self.player1.matrix)
+
+        self.tutorial_player1.reset_matrix()
+        self.tutorial_player2.reset_matrix()
 
         print(
-            "In dice clash, each player's objective is to acummulate the most points with your dice"
+            "In dice clash, each player's objective is to accumulate the most points with your dice"
             "\nwhile removing points from your opponent!"
             "\n"
-            "\nEach player starts with their own empty grid, as such:"
+            "\nEach player starts with their own empty grid, as such:\n"
         )
-        print(example_matrix)
+
+        self.tutorial_stats()
+
+        input("Press ENTER to continue.")
+        clear_screen()
+
+        print("Taking turns, each player will roll a die from 1-6 and place it on a vacant space of their matrix.")
+        print()
+
+        self.tutorial_player1.matrix[0,0] = 3
+        self.tutorial_player2.matrix[0,2] = 5
+
+        self.tutorial_player1.calculate_score()
+        self.tutorial_player2.calculate_score()
+
+        self.tutorial_stats()
+
+        input("Press ENTER to continue.")
+        clear_screen()
+
+        print("Each player's score is the sum of all dice they currently have on their own matrix.")
+        print()
+        print("If a player has two or more equal dice on the same column, \n"
+              "these dice will be summed and multiplied by how many repeated dice they have!")
+        print()
+
+        self.tutorial_player1.matrix[1,0] = 3
+
+        self.tutorial_player1.calculate_score()
+        self.tutorial_player2.calculate_score()
+
+        self.tutorial_stats()
+
+        input("Press ENTER to continue.")
+        clear_screen()
+
+        print("But be careful! If your opponent places a dice you already have in the same column \n"
+              "your dice of that value will disappear and your score will go down!")
+        print()
+
+        self.tutorial_player2.matrix[0,0] = 3
+        self.tutorial_player1.matrix[0:2, 0] = 0
+
+        self.tutorial_player1.calculate_score()
+        self.tutorial_player2.calculate_score()
+
+        self.tutorial_stats()
+
+        input("Press ENTER to continue.")
+        clear_screen()
+
+        print("That's all you need to know about dice clash!")
+        again = input("Do you want to read the tutorial again (y/n)? -> ")
+
+        if again == "y":
+            self.tutorial()
 
     def player_turn(self, player):
         print(f"Player {player.name}, your turn.")
@@ -121,6 +192,7 @@ class Match:
         print(self.player2.matrix, f"\nPlayer {self.player2.name}'s score: {self.player2.score}")
         print()
         input("Press ENTER to continue the game.")
+        print()
 
     def player_matrix_is_full(self, player):
         return player.matrix.all() != 0
@@ -130,7 +202,11 @@ class Match:
 
     def declare_winner(self):
         if self.player1.score > self.player2.score:
-            print(f"Player {self.player1.name} wins!")
+            print(f"Player {self.player1.name} wins! :)")
+        elif self.player2.score > self.player1.score:
+            print(f"Player {self.player2.name} wins! :)")
+        elif self.player2.score == self.player1.score:
+            print("It's a tie! Both players win! :)")
 
     def play(self):
         keep_playing = True
@@ -165,6 +241,9 @@ class Match:
 
         if play_again == "y":
             clear_screen()
+            self.player1.reset_matrix()
+            self.player2.reset_matrix()
+
             self.play()
 
 ########################################################################################################################
