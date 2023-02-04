@@ -1,5 +1,8 @@
 import numpy as np
 
+def clear_screen():
+    print('\n' * 75)
+
 
 class Player:
 
@@ -80,6 +83,8 @@ class Match:
         print()
         matrix_size = int(input(f"How big do you want the board (3-5)?"))
 
+        clear_screen()
+
         self.player1 = Player(name=name1.capitalize(), matrix_size=matrix_size)
         self.player2 = Player(name=name2.capitalize(), matrix_size=matrix_size)
 
@@ -108,6 +113,7 @@ class Match:
         self.player2.calculate_score()
 
     def display_game_stats(self):
+        clear_screen()
         print(f"Player {self.player1.name}'s matrix:")
         print(self.player1.matrix, f"\nPlayer {self.player1.name}'s score: {self.player1.score}")
         print()
@@ -158,6 +164,7 @@ class Match:
         play_again = input("Would you like to play again (y/n)? -> ")
 
         if play_again == "y":
+            clear_screen()
             self.play()
 
 ########################################################################################################################
